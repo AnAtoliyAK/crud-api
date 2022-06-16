@@ -1,0 +1,19 @@
+{
+  "name": "crud-api",
+  "version": "1.0.0",
+  "description": "simple crud api",
+  "main": "index.ts",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnAtoliyAK/crud-api.git"
+  },
+  "author": "AnAtoliyAA",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AnAtoliyAK/crud-api/issues"
+  },
+  "homepage": "https://github.com/AnAtoliyAK/crud-api#readme"
+}
