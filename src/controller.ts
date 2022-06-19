@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 const PORT = process.env.PORT || 5000;
 const jsonData = readFileSync(path.join(__dirname, "./data.json"), "utf-8");
 
-let data_users = JSON.parse(jsonData.toString()) as Array<IUser>;
+let data_users = JSON.parse(jsonData) as Array<IUser>;
 
 class Controller {
   static async getUsers() {
