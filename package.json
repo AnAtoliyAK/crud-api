@@ -35,6 +35,8 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
+    "@types/supertest": "^2.0.12",
+    "ts-jest": "^28.0.5",
     "uuid": "^8.3.2"
   },
   "jest": {
