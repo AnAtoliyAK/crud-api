@@ -6,8 +6,6 @@ import getReqData from "./utils/getReqData";
 import { writeFile, readFileSync } from "fs";
 import getFilePath from "./utils/getFilePath";
 import path from "path";
-import { version as uuidVersion } from 'uuid';
-import { validate as uuidValidate } from 'uuid';
 import uuidValidateV4 from "./utils/validateId";
 
 const PORT = process.env.PORT || 5000;
@@ -24,29 +22,29 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { "Content-Type": "application/json" });
 
     res.end(JSON.stringify(users));
+  } else if (req?.url?.includes(ApiPath.API_USERS + "/")) {
+    const id = req?.url?.split("/")[3];
+
+    if (!uuidValidateV4(id)) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end("You should use uuid for id");
+    }
   } else if (
     req?.url?.includes(ApiPath.API_USERS + "/") &&
     req.method === ApiMethods.GET
   ) {
-      const id = req?.url?.split("/")[3];
+    const id = req?.url?.split("/")[3];
+    try {
+      const user = await Controller.getUser(id);
 
-      if (uuidValidateV4(id)) {
-          try {
-            const user = await Controller.getUser(id);
-      
-            res.writeHead(200, { "Content-Type": "application/json" });
-      
-            res.end(JSON.stringify(user));
-          } catch (error) {
-            res.writeHead(404, { "Content-Type": "application/json" });
-      
-            res.end(JSON.stringify({ message: error }));
-          }
-      } else {
-        res.writeHead(400, { "Content-Type": "application/json" });
-      
-            res.end("Not valid user Id");
-      }
+      res.writeHead(200, { "Content-Type": "application/json" });
+
+      res.end(JSON.stringify(user));
+    } catch (error) {
+      res.writeHead(404, { "Content-Type": "application/json" });
+
+      res.end(JSON.stringify({ message: error }));
+    }
   } else if (
     req.url?.includes(ApiPath.API_USERS + "/") &&
     req.method === ApiMethods.DELETE
