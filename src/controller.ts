@@ -1,14 +1,22 @@
-import data from "./data";
 import { IUser } from "./types/types";
 
+import { readFileSync } from "fs";
+import path from "path";
+import { v4 as uuidv4 } from "uuid";
+
+const PORT = process.env.PORT || 5000;
+const jsonData = readFileSync(path.join(__dirname, "./data.json"), "utf-8");
+
+let data_users = JSON.parse(jsonData.toString()) as Array<IUser>;
+
 class Controller {
-  async getUsers() {
-    return new Promise((resolve, _) => resolve(data));
+  static async getUsers() {
+    return new Promise((resolve, _) => resolve(data_users));
   }
 
-  async getUser(id: string) {
+  static async getUser(id: string) {
     return new Promise((resolve, reject) => {
-      const user = data.find((user) => user.id === Number(parseInt(id)));
+      const user = data_users.find((user) => user.id === id);
       if (user) {
         resolve(user);
       } else {
@@ -17,32 +25,52 @@ class Controller {
     });
   }
 
-  async createUser(user: IUser) {
-    return new Promise((resolve, _) => {
-      const newuser = {
-        ...user,
-        id: Math.floor(4 + Math.random() * 10),
-      };
+  static async createUser(user: IUser) {
+    return new Promise((resolve, reject) => {
+      const { age, username, hobbies } = user;
+      const requiredFieldValidation =
+        typeof age === "number" &&
+        typeof username === "string" &&
+        Array.isArray(hobbies);
 
-      resolve(newuser);
+      if (requiredFieldValidation) {
+        const newUser = {
+          ...user,
+          id: uuidv4(),
+        };
+
+        resolve(newUser);
+      } else {
+        if (!age || typeof age !== "number") {
+          reject(`age field is required and should be number`);
+        }
+        if (!username || typeof username === "string") {
+          reject(`age field is required and should be string`);
+        }
+        if (!hobbies || Array.isArray(hobbies)) {
+          reject(`age field is required and should be Array`);
+        }
+      }
     });
   }
 
-  async updateUser(id: string) {
+  static async updateUser(user: IUser, id: string) {
     return new Promise((resolve, reject) => {
-      const user = data.find((user) => user.id === parseInt(id));
+      const data_user = data_users.find((u) => u.id === id);
 
-      if (!user) {
-        reject(`No user with id ${id} found`);
+      if (!data_user) {
+        reject(`No user with id ${user.id} found`);
       }
 
-      resolve(user);
+      const updatedUser = { ...user, id };
+
+      resolve(updatedUser);
     });
   }
 
-  async deleteUser(id: string) {
+  static async deleteUser(id: string | number) {
     return new Promise((resolve, reject) => {
-      const user = data.find((user) => user.id === parseInt(id));
+      const user = data_users.find((user) => user.id === id);
 
       if (!user) {
         reject(`No user with id ${id} found`);
@@ -52,4 +80,5 @@ class Controller {
     });
   }
 }
+
 export default Controller;

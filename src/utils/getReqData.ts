@@ -15,4 +15,5 @@ function getReqData(req: any) {
     }
   });
 }
+
 export default getReqData;
